@@ -32,9 +32,6 @@ const std::string currentDateTime() {
 	return buf;
 }
 
-// TODO: progress bar
-// TODO: Mac support
-
 // Calls process in background and checks it's output.
 int StreamCommand(const std::string& command, LineProcessor& proc,
                   const std::string& tempFileName, bool redirect = true) {
@@ -189,7 +186,7 @@ int main() {
     using namespace std;
 	
 	cout << string(70, '=') << endl;
-	cout << "Speed Testing for 10G Network" << endl << endl;
+	cout << "Singtel Speed Testing for 10G Network" << endl << endl;
 	cout << "Powered by iPerf3" << endl;
 	cout << string(70, '=') << endl;
 	cin.clear();
