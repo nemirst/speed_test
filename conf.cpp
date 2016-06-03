@@ -3,6 +3,8 @@
 #include <map>
 #include <string>
 #include <iostream>
+#include <sstream>
+#include <fstream>
 
 #include "conf.h"
 
@@ -28,6 +30,21 @@ char *trimwhitespace(char *str)
   *(end+1) = 0;
 
   return str;
+}
+
+std::string ReadContents(const std::string& file_name)
+{
+	using namespace std;
+	ifstream in(file_name);
+	if (!in.is_open())
+	{
+		cerr << "Error: " << strerror(errno) << endl;
+		return "";
+	}
+	stringstream buffer;
+	buffer << in.rdbuf();
+	in.close();
+	return buffer.str();
 }
 
 int conf_read(const std::string& filename, std::map < std::string, std::string >& my_map)

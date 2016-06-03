@@ -11,4 +11,6 @@ bool conf_contains(const Map& pMap, const Key& pKey)
     return pMap.find(pKey) != pMap.end();
 }
 
+std::string ReadContents(const std::string& file_name);
+
 #endif /* CONF_H_ */

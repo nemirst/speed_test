@@ -11,6 +11,8 @@
 
 #include <conio.h>
 
+#include <md5.h>
+
 #include "my_sleep.h"
 #include "conf.h"
 #include "IperfProc.h"
@@ -184,6 +186,39 @@ int HandleResults(const Progress& p, MyNetwork& n, const std::map<std::string, s
 
 int main() {
     using namespace std;
+
+	string config_str = ReadContents("config.txt");
+	if (config_str.length() == 0)
+	{
+		cout << endl << "ERROR: Failed to read configuration file" << endl;
+		return -1;
+	}
+	string config_sig = ReadContents("config.txt.sig");
+	if (config_sig.length() == 0)
+	{
+		cout << endl << "ERROR: Failed to read signature of configuration file" << endl;
+		fflush(stdin);
+		_getch();
+		return -1;
+	}
+
+	string secret = "49b8d727d50876446b4da9659aa8cde9";
+	string real_sig = md5(config_str + secret);
+	if (config_sig != real_sig)
+	{
+		cout << endl << "ERROR: wrong signature " << real_sig <<
+			" for configuration file. Changed contents?" << endl;
+		fflush(stdin);
+		_getch();
+		return -1;
+	}
+
+	if (conf_read("config.txt", conf) != 0) {
+		cout << endl << "ERROR: Failed to read configuration file" << endl;
+		fflush(stdin);
+		_getch();
+		return -1;
+	}
 	
 	cout << string(70, '=') << endl;
 	cout << "Singtel Speed Testing for 10G Network" << endl << endl;
@@ -197,10 +232,6 @@ int main() {
 
 	Progress::ShowProgress(0);
 
-    if(conf_read("config.txt", conf) != 0) {
-        cout << endl << "ERROR: Failed to read configuration file" << endl;
-        return -1;
-    }
 	Progress p(conf);
 
     MyNetwork net(conf);
@@ -209,6 +240,8 @@ int main() {
     int ret = 0;
     int latency = 0;
     if((ret = HandlePing(latency)) != 0) {
+		fflush(stdin);
+		_getch();
         return ret;
     }
 	p.ShowProgress(Progress::PING, 1);
@@ -216,11 +249,15 @@ int main() {
     int downloadSpeed = 0, uploadSpeed = 0;
 	string downloadTime, uploadTime, downloadDuration, uploadDuration;
     if((ret = HandleIperf(p, downloadSpeed, uploadSpeed, downloadTime, uploadTime, downloadDuration, uploadDuration)) != 0) {
+		fflush(stdin);
+		_getch();
         return ret;
     }
 
     string extIp;
     if((ret = HandleExtIp(net, extIp)) != 0) {
+		fflush(stdin);
+		_getch();
         return ret;
     }
 
@@ -249,6 +286,8 @@ int main() {
     }
 	p.ShowProgress(Progress::RESULTS, 0);
     if((ret = HandleResults(p, net, params)) != 0) {
+		fflush(stdin);
+		_getch();
         return ret;
     }
 	Progress::ShowProgress(100);
