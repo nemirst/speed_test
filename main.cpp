@@ -208,8 +208,8 @@ int main() {
 	string real_sig = md5(config_str + secret);
 	if (config_sig != real_sig)
 	{
-		cout << endl << "ERROR: wrong signature " << real_sig <<
-			" for configuration file. Changed contents?" << endl;
+		cout << endl << "ERROR: wrong signature for configuration file. "
+			"Changed contents?" << endl;
 		fflush(stdin);
 		_getch();
 		return -1;
