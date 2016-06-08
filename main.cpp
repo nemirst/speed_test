@@ -191,6 +191,8 @@ int main() {
 	if (config_str.length() == 0)
 	{
 		cout << endl << "ERROR: Failed to read configuration file" << endl;
+		fflush(stdin);
+		_getch();
 		return -1;
 	}
 	string config_sig = ReadContents("config.txt.sig");
