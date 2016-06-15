@@ -6,31 +6,12 @@
 #include <sstream>
 #include <fstream>
 
+#include "base64.h"
+#include "MyUtils.h"
+
 #include "conf.h"
 
 #define MAXLINELENGTH 1024
-
-char *trimwhitespace(char *str);
-
-char *trimwhitespace(char *str)
-{
-  char *end;
-
-  // Trim leading space
-  while(isspace(*str)) str++;
-
-  if(*str == 0)  // All spaces?
-    return str;
-
-  // Trim trailing space
-  end = str + strlen(str) - 1;
-  while(end > str && isspace(*end)) end--;
-
-  // Write new null terminator
-  *(end+1) = 0;
-
-  return str;
-}
 
 std::string ReadContents(const std::string& file_name)
 {
@@ -47,13 +28,40 @@ std::string ReadContents(const std::string& file_name)
 	return buffer.str();
 }
 
+void process_line(char* input, std::map < std::string, std::string >& my_map)
+{
+	if (input[0] == '#')
+		return;
+	int len = strlen(input);
+	if (len < 2)
+		return;
+	if (input[len - 1] == '\n')
+		input[len - 1] = '\0';
+	int ptr = 0;
+	bool found = false;
+	while (ptr < len)
+	{
+		if (input[ptr] == '=')
+		{
+			found = true;
+			input[ptr++] = '\0';
+			break;
+		}
+		ptr++;
+	}
+	if (found)
+	{
+		std::string key = input;
+		std::string val = &input[ptr];
+		my_map[MyUtils::trim(key)] = MyUtils::trim(val);
+	}
+}
+
 int conf_read(const std::string& filename, std::map < std::string, std::string >& my_map)
 {
     using namespace std;
     char input[MAXLINELENGTH];
     FILE *fin;
-    int len, ptr;
-    bool found;
 
     if ((fin = fopen(filename.c_str(), "r")) == NULL)
     {
@@ -63,31 +71,23 @@ int conf_read(const std::string& filename, std::map < std::string, std::string >
 
     while (fgets(input, MAXLINELENGTH, fin))
     {
-        if (input[0] == '#')
-            continue;
-        len = strlen(input);
-        if (len < 2)
-            continue;
-        if (input[len-1] == '\n')
-            input[len-1] = '\0';
-        ptr = 0;
-        found = false;
-        while (ptr < len)
-        {
-            if (input[ptr] == '=')
-            {
-                found = true;
-                input[ptr++] = '\0';
-                break;
-            }
-            ptr++;
-        }
-        if (found)
-        {
-        	my_map[trimwhitespace(input)] = trimwhitespace(&input[ptr]);
-        }
+		process_line(input, my_map);
     }
     fclose(fin);
     return 0;
+}
+
+int conf_read_base64(const std::string& base64str, std::map<std::string, std::string>& my_map)
+{
+	std::string conf = base64_decode(base64str);
+	std::stringstream sstr;
+	sstr << conf;
+	std::string line;
+	char input[MAXLINELENGTH];
+	while (sstr.getline(input, MAXLINELENGTH))
+	{
+		process_line(input, my_map);
+	}
+	return 0;
 }
 

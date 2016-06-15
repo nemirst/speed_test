@@ -4,6 +4,7 @@
 #include <map>
 
 int conf_read(const std::string& filename, std::map<std::string, std::string>& my_map);
+int conf_read_base64(const std::string& base64str, std::map<std::string, std::string>& my_map);
 
 template <typename Map, typename Key>
 bool conf_contains(const Map& pMap, const Key& pKey)
