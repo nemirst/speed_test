@@ -1,7 +1,7 @@
 EXT_IP_URL=http://myexternalip.com/raw
 PING_CMD=ping 202.166.127.98
-IPERF_UP_CMD=iperf3 -c 202.166.127.98 -P 10 -w 710000 -f k --logfile upload_stream.txt
-IPERF_DOWN_CMD=iperf3 -c 202.166.127.98 -P 16 -w 710000 -f k --logfile download_stream.txt -R
+IPERF_UP_CMD=iperf3 -c 202.166.127.98 -P 15 -w 700000 -t 20 -i 1 -f k --logfile upload_stream.txt
+IPERF_DOWN_CMD=iperf3 -c 202.166.127.98 -P 15 -w 700000 -t 20 -i 1 -f k --logfile download_stream.txt -R
 DB_IP=202.166.127.98
 DB_PORT=3306
 DB_NAME=speed
