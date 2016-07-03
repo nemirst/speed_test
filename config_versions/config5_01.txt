@@ -1,0 +1,13 @@
+EXT_IP_URL=http://myexternalip.com/raw
+PING_CMD=ping 202.166.127.98
+IPERF_UP_CMD=iperf3 -c 202.166.127.98 -P 18 -w 700000 -t 20 -i 1 -f k --logfile upload_stream.txt
+IPERF_DOWN_CMD=iperf3 -c 202.166.127.98 -P 20 -w 700000 -t 20 -i 1 -f k --logfile download_stream.txt -R
+DB_IP=202.166.127.98
+DB_PORT=3306
+DB_NAME=speed
+DB_USER=speedclient
+DB_PSW=singtel123#
+DB_TABLE=speedlog
+RESULTS_URL=http://techsupport.singnet.com.sg/utility/speedresult_api.php
+RESULTS_KEY=Hiuwefiuwhf782349*lio34sdfFdslaPisdf
+RESULTS_SHOW_URL= http://techsupport.singnet.com.sg/spdtstrst
